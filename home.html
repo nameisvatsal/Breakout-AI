@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sending Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Email Sending Dashboard</h1>
+
+        <!-- Upload Data Section -->
+        <div class="section">
+            <h2>Upload Data</h2>
+            <input type="file" id="dataFile" accept=".csv" />
+            <button onclick="uploadData()">Upload File</button>
+        </div>
+
+        <!-- Email Customization Section -->
+        <div class="section">
+            <h2>Customize Email</h2>
+            <input type="text" id="emailSubject" placeholder="Email Subject" required />
+            <textarea id="emailBody" placeholder="Email Body Template"></textarea>
+            <textarea id="emailPrompt" placeholder="Prompt for personalization (e.g., 'Write a professional greeting for {name}')"></textarea>
+        </div>
+
+        <!-- Send Emails Button -->
+        <div class="section">
+            <button onclick="sendEmails()">Send Emails</button>
+        </div>
+
+        <!-- Real-Time Status -->
+        <div id="status">
+            <h2>Status</h2>
+            <p id="statusText">Awaiting action...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pandas
+gspread
+openai
+celery
+redis
+python-dotenv
+sendgrid
+requests
