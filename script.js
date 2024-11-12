@@ -1,7 +1,7 @@
 async function uploadData() {
     const fileInput = document.getElementById("dataFile");
     const file = fileInput.files[0];
-    
+
     if (!file) {
         alert("Please select a CSV file to upload.");
         return;
@@ -10,13 +10,16 @@ async function uploadData() {
     const formData = new FormData();
     formData.append("file", file);
 
+    console.log("Uploading file:", file.name);  // Log file details
+
     try {
         const response = await fetch("http://127.0.0.1:5000/upload", {
             method: "POST",
             body: formData
         });
-        
+
         const result = await response.json();
+        console.log("Server response:", result);  // Log the server response
 
         if (response.ok) {
             document.getElementById("statusText").textContent = "File uploaded successfully!";
@@ -43,9 +46,11 @@ async function sendEmails() {
 
     const emailData = {
         subject: emailSubject,
-        body: emailBody,
+        bodyTemplate: emailBody,  // Updated to 'bodyTemplate' as per server expectation
         prompt: emailPrompt
     };
+
+    console.log("Email data being sent:", emailData);  // Log email data to verify structure
 
     try {
         const response = await fetch("http://127.0.0.1:5000/send_emails", {
@@ -57,6 +62,7 @@ async function sendEmails() {
         });
 
         const result = await response.json();
+        console.log("Server response for sending emails:", result);  // Log the server response
 
         if (response.ok) {
             document.getElementById("statusText").textContent = "Emails sent successfully!";
