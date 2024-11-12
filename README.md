@@ -87,8 +87,5 @@ email-sending-dashboard/
 │   └── script.js     # JavaScript logic for the front-end
 └── templates/        # HTML templates
     └── index.html    # Dashboard interface
-Contributions
-Contributions are welcome! If you want to contribute, please fork the repository, make your changes, and submit a pull request.
 
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
+
