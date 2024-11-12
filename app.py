@@ -7,9 +7,9 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
-# Replace these with your email credentials
-GMAIL_USER = 'pvlsyama@gmail.com'
-GMAIL_PASSWORD = 'sr1_saloastamini@google2'
+# Use environment variables for email credentials
+GMAIL_USER = os.getenv('GMAIL_USER', 'your_email@gmail.com')
+GMAIL_PASSWORD = os.getenv('GMAIL_PASSWORD', 'your_password')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -25,8 +25,8 @@ def upload_file():
         # Read the CSV file
         df = pd.read_csv(file)
         
-        # You can check the data (this prints the first 5 rows)
-        print(df.head())  # Display the first few rows to confirm the data
+        # Display the first few rows to confirm the data
+        print("Data preview:", df.head())
         
         # Save the DataFrame to a global variable for later use
         app.config['csv_data'] = df
@@ -34,7 +34,7 @@ def upload_file():
         return jsonify({"message": "File uploaded successfully", "data": df.to_dict()}), 200
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Failed to process CSV file: {str(e)}"}), 500
 
 
 @app.route('/send_emails', methods=['POST'])
@@ -79,9 +79,10 @@ def send_emails():
                 print(f"Error sending email to {recipient_email}: {str(e)}")
         
         server.quit()
-        return jsonify({"message": "Emails are being sent."}), 200
+        return jsonify({"message": "Emails have been sent successfully."}), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error setting up SMTP server or sending emails: {str(e)}")
+        return jsonify({"error": f"SMTP error: {str(e)}"}), 500
 
 
 if __name__ == '__main__':
