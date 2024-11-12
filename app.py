@@ -14,10 +14,10 @@ api = Api(app, version="1.0", title="Email Sending API", description="A simple A
 ns = api.namespace("emails", description="Email operations")
 
 # Directly set Gmail credentials and Groq API key for testing
-GMAIL_USER = 'pvlsyama@gmail.com'  # Gmail account
-GMAIL_PASSWORD = 'sr1_saloastamini@google2'
+GMAIL_USER = ''  # Gmail account
+GMAIL_PASSWORD = ''
  # Gmail password (App Password recommended)
-GROQ_API_KEY = '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'  # Groq API Key
+GROQ_API_KEY = ''  # Groq API Key
 
 # Initialize Groq client
 client = Groq(api_key=GROQ_API_KEY)
