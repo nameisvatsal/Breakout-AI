@@ -1,88 +1,110 @@
 import os
 import pandas as pd
 from flask import Flask, request, jsonify
+from flask_restx import Api, Resource, fields
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
+api = Api(app, version="1.0", title="Email Sending API", description="A simple API to send customized emails")
+ns = api.namespace("emails", description="Email operations")
 
-# Use environment variables for email credentials
+# Environment variables for email credentials
 GMAIL_USER = os.getenv('GMAIL_USER', 'your_email@gmail.com')
 GMAIL_PASSWORD = os.getenv('GMAIL_PASSWORD', 'your_password')
 
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
-    
-    file = request.files['file']
-    
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-    
-    try:
-        # Read the CSV file
-        df = pd.read_csv(file)
+# Define models for request body validation in Swagger
+upload_model = api.model('Upload', {
+    'file': fields.String(description='CSV file to upload', required=True)
+})
+
+email_model = api.model('Email', {
+    'subject': fields.String(description='Email Subject', required=True),
+    'bodyTemplate': fields.String(description='Email Body Template', required=True),
+    'prompt': fields.String(description='Prompt for personalization', required=True)
+})
+
+@ns.route('/upload')
+class UploadFile(Resource):
+    @api.doc(description="Upload a CSV file for email customization")
+    @api.expect(upload_model, validate=True)
+    def post(self):
+        """Endpoint to upload CSV file"""
+        if 'file' not in request.files:
+            return {"error": "No file part"}, 400
         
-        # Display the first few rows to confirm the data
-        print("Data preview:", df.head())
+        file = request.files['file']
         
-        # Save the DataFrame to a global variable for later use
-        app.config['csv_data'] = df
+        if file.filename == '':
+            return {"error": "No selected file"}, 400
         
-        return jsonify({"message": "File uploaded successfully", "data": df.to_dict()}), 200
-    
-    except Exception as e:
-        return jsonify({"error": f"Failed to process CSV file: {str(e)}"}), 500
-
-
-@app.route('/send_emails', methods=['POST'])
-def send_emails():
-    data = request.get_json()
-
-    if not data or 'subject' not in data or 'bodyTemplate' not in data or 'prompt' not in data:
-        return jsonify({"error": "Invalid data received"}), 400
-
-    # Retrieve the CSV data from the uploaded file
-    df = app.config.get('csv_data', None)
-    if df is None:
-        return jsonify({"error": "No CSV data found. Please upload a CSV file first."}), 400
-
-    # Set up the SMTP server
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(GMAIL_USER, GMAIL_PASSWORD)
-
-        # Iterate over each row in the CSV file (each recipient)
-        for _, row in df.iterrows():
-            recipient_email = row['email']
-            recipient_name = row['name']
+        try:
+            # Read the CSV file
+            df = pd.read_csv(file)
             
-            # Customize email body
-            personalized_body = data['bodyTemplate'].replace("{name}", recipient_name)
+            # Display the first few rows to confirm the data
+            print("Data preview:", df.head())
             
-            # Create email message
-            msg = MIMEMultipart()
-            msg['From'] = GMAIL_USER
-            msg['To'] = recipient_email
-            msg['Subject'] = data['subject']
-
-            msg.attach(MIMEText(personalized_body, 'plain'))
+            # Save the DataFrame to a global variable for later use
+            app.config['csv_data'] = df
             
-            try:
-                # Send email
-                server.sendmail(GMAIL_USER, recipient_email, msg.as_string())
-                print(f"Email sent to {recipient_email}")
-            except Exception as e:
-                print(f"Error sending email to {recipient_email}: {str(e)}")
+            return {"message": "File uploaded successfully", "data": df.to_dict()}, 200
         
-        server.quit()
-        return jsonify({"message": "Emails have been sent successfully."}), 200
-    except Exception as e:
-        print(f"Error setting up SMTP server or sending emails: {str(e)}")
-        return jsonify({"error": f"SMTP error: {str(e)}"}), 500
+        except Exception as e:
+            return {"error": f"Failed to process CSV file: {str(e)}"}, 500
+
+
+@ns.route('/send_emails')
+class SendEmails(Resource):
+    @api.doc(description="Send emails using the provided template and CSV data")
+    @api.expect(email_model, validate=True)
+    def post(self):
+        """Endpoint to send emails"""
+        data = request.get_json()
+
+        if not data or 'subject' not in data or 'bodyTemplate' not in data or 'prompt' not in data:
+            return {"error": "Invalid data received"}, 400
+
+        # Retrieve the CSV data from the uploaded file
+        df = app.config.get('csv_data', None)
+        if df is None:
+            return {"error": "No CSV data found. Please upload a CSV file first."}, 400
+
+        # Set up the SMTP server
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(GMAIL_USER, GMAIL_PASSWORD)
+
+            # Iterate over each row in the CSV file (each recipient)
+            for _, row in df.iterrows():
+                recipient_email = row['email']
+                recipient_name = row['name']
+                
+                # Customize email body
+                personalized_body = data['bodyTemplate'].replace("{name}", recipient_name)
+                
+                # Create email message
+                msg = MIMEMultipart()
+                msg['From'] = GMAIL_USER
+                msg['To'] = recipient_email
+                msg['Subject'] = data['subject']
+
+                msg.attach(MIMEText(personalized_body, 'plain'))
+                
+                try:
+                    # Send email
+                    server.sendmail(GMAIL_USER, recipient_email, msg.as_string())
+                    print(f"Email sent to {recipient_email}")
+                except Exception as e:
+                    print(f"Error sending email to {recipient_email}: {str(e)}")
+            
+            server.quit()
+            return {"message": "Emails have been sent successfully."}, 200
+        except Exception as e:
+            print(f"Error setting up SMTP server or sending emails: {str(e)}")
+            return {"error": f"SMTP error: {str(e)}"}, 500
 
 
 if __name__ == '__main__':
