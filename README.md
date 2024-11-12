@@ -1,4 +1,7 @@
 Email Sending Dashboard
+
+![image](https://github.com/user-attachments/assets/90f9c14b-ad00-4370-a836-a0bbfa0fa901)
+
 This project provides a simple web interface for uploading a CSV file and sending customized emails to multiple recipients. The system allows users to upload data, customize email content with a template and personalization prompts, and send emails through a Gmail SMTP server.
 
 Features
