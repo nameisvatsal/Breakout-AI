@@ -1,88 +1,138 @@
-Email Sending Dashboard
 
-![image](https://github.com/user-attachments/assets/90f9c14b-ad00-4370-a836-a0bbfa0fa901)
+---
 
-This project provides a simple web interface for uploading a CSV file and sending customized emails to multiple recipients. The system allows users to upload data, customize email content with a template and personalization prompts, and send emails through a Gmail SMTP server.
+# 📧 Email Sending Dashboard
 
-Features
-File Upload: Upload CSV files containing recipient data (e.g., name, email).
-Email Customization: Customize the subject, body template, and personalization prompt for each email.
-Real-Time Status: Display upload and email sending statuses.
-Groq Integration: Personalize email content using AI-generated responses from the Groq API.
-Email Sending: Send emails using a Gmail SMTP server.
-Prerequisites
-Python 3.x
-Flask
-Flask-RESTX
-Groq Client (for personalization)
-Pandas
-Flask-CORS
-Gmail SMTP credentials
-Environment Variables
-Make sure to set the following environment variables in your development environment:
+![Email Dashboard](https://github.com/user-attachments/assets/90f9c14b-ad00-4370-a836-a0bbfa0fa901)
 
-GMAIL_USER: Your Gmail address (e.g., example@gmail.com).
-GMAIL_PASSWORD: Your Gmail account password or an app-specific password.
-GROQ_API_KEY: Your Groq API key for AI-powered personalization.
-Installation
-Step 1: Clone the repository
-bash
-Copy code
+This project provides a simple web interface for uploading a CSV file and sending customized emails to multiple recipients. It allows users to upload data, customize email content with a template and personalization prompts, and send emails through a Gmail SMTP server.
+
+---
+
+## 🚀 Features
+
+✅ **File Upload:** Upload CSV files containing recipient data (e.g., name, email).  
+✅ **Email Customization:** Customize the subject, body template, and personalization prompt.  
+✅ **Real-Time Status:** Display upload and email sending statuses.  
+✅ **Groq API Integration:** Personalize email content using AI-generated responses.  
+✅ **Email Sending:** Send emails via Gmail SMTP.
+
+---
+
+## 🛠 Prerequisites
+
+- Python 3.x
+- Flask
+- Flask-RESTX
+- Flask-CORS
+- Pandas
+- Groq Client (for AI personalization)
+- Gmail SMTP credentials
+
+---
+
+## 🔐 Environment Variables
+
+Create a `.env` file with the following variables:
+
+```
+GMAIL_USER=your_email@gmail.com
+GMAIL_PASSWORD=your_app_password
+GROQ_API_KEY=your_groq_api_key
+```
+
+---
+
+## ⚙️ Installation
+
+### Step 1: Clone the Repository
+```bash
 git clone https://github.com/yourusername/email-sending-dashboard.git
 cd email-sending-dashboard
-Step 2: Install dependencies
-Make sure you have pip installed, then run:
+```
 
-bash
-Copy code  
-pip install -r requirements.txt  
-Step 3: Set up environment variables  
-Create a .env file and add your environment variables:  
-  
+### Step 2: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-GMAIL_USER=your_email@gmail.com  
-GMAIL_PASSWORD=your_password  
-GROQ_API_KEY=your_groq_api_key  
-Step 4: Run the application  
-Start the Flask application:  
-  
-
+### Step 3: Run the Application
+```bash
 python app.py
-The server will start, and the dashboard can be accessed at http://127.0.0.1:5000/.  
-  
-Usage  
-Upload Data: Click the "Upload File" button to upload a CSV file containing recipient information (e.g., name and email).  
-Customize Email: Enter a subject, body template, and a prompt for personalization.  
-Send Emails: Click the "Send Emails" button to send personalized emails to all recipients in the CSV file.  
-Check Status: Monitor the real-time status of the upload and email sending process.  
-API Endpoints  
-/upload (POST)  
-Description: Upload a CSV file containing recipient information.  
-Body: A file upload (CSV format).  
-Response:  
-200 OK: If the file is uploaded successfully.  
-400 Bad Request: If the file is not valid or missing.  
-500 Internal Server Error: If an error occurs during the upload.  
-/send_emails (POST)  
-Description: Send emails using the provided subject, body template, and personalization prompt.  
-Body: JSON containing:  
-subject: The subject of the email.  
-bodyTemplate: The body template of the email.  
-prompt: The prompt for generating personalized content (e.g., "Write a professional greeting for {name}").  
-Response:  
-200 OK: If emails are sent successfully.  
-400 Bad Request: If required data is missing.    
-500 Internal Server Error: If an error occurs while sending emails.    
-Folder Structure    
-  
-email-sending-dashboard/   
-│  
-├── app.py            # Main Flask application  
-├── requirements.txt  # Python dependencies  
-├── static/           # Static files (CSS, JS)  
-│   └── styles.css    # Stylesheet for the front-end  
-│   └── script.js     # JavaScript logic for the front-end  
-└── templates/        # HTML templates  
-    └── index.html    # Dashboard interface  
-  
+```
 
+Access the dashboard at: [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
+
+---
+
+## 📖 Usage
+
+1. **Upload Data:** Click **"Upload File"** to upload a CSV with recipient data (`name`, `email`).
+2. **Customize Email:** Enter:
+   - **Subject**
+   - **Body Template**
+   - **Personalization Prompt**
+3. **Send Emails:** Click **"Send Emails"** to process and send customized emails.
+4. **Monitor Status:** View real-time updates on upload and sending progress.
+
+---
+
+## 🧩 API Endpoints
+
+### 📥 `/upload` (POST)
+- **Description:** Upload CSV with recipient data.
+- **Body:** Multipart form-data (CSV file)
+- **Responses:**
+  - `200 OK`: File uploaded successfully.
+  - `400 Bad Request`: Invalid or missing file.
+  - `500 Internal Server Error`: Upload failure.
+
+---
+
+### 📤 `/send_emails` (POST)
+- **Description:** Send personalized emails.
+- **Body:** JSON
+```json
+{
+  "subject": "Your Email Subject",
+  "bodyTemplate": "Hello {name}, your message here.",
+  "prompt": "Write a professional greeting for {name}"
+}
+```
+- **Responses:**
+  - `200 OK`: Emails sent successfully.
+  - `400 Bad Request`: Missing data.
+  - `500 Internal Server Error`: Sending failure.
+
+---
+
+## 📂 Folder Structure
+
+```
+email-sending-dashboard/
+│
+├── app.py              # Main Flask application
+├── requirements.txt    # Python dependencies
+│
+├── static/             # Static files (CSS, JS)
+│   ├── styles.css
+│   └── script.js
+│
+└── templates/          # HTML templates
+    └── index.html      # Dashboard Interface
+```
+
+---
+
+## 🎯 Future Improvements (Optional Ideas)
+- Add email preview before sending.
+- Schedule email delivery.
+- Add more AI personalization options.
+- Export email delivery reports.
+
+---
+
+## 📝 License
+MIT License
+
+---
